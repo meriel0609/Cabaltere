@@ -1,0 +1,292 @@
+<html><head><base href="https://namescape.vercel.app/"><meta charset="UTF-8">
+<title>Filipino Name Generator</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #0038A8 0%, #CE1126 50%, #FCD116 100%);
+  color: white;
+  text-align: center;
+}
+
+.container {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+}
+
+h1 {
+  color: #FCD116;
+  margin-bottom: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.gender-select {
+  margin-bottom: 2rem;
+}
+
+.gender-select label {
+  margin: 0 1rem;
+  cursor: pointer;
+}
+
+.name-display {
+  font-size: 2rem;
+  margin: 2rem 0;
+  min-height: 60px;
+  perspective: 1000px;
+}
+
+.name-part {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  margin: 0 0.5rem;
+}
+
+.meaning {
+  font-size: 1rem;
+  color: #FCD116;
+  margin-bottom: 2rem;
+  opacity: 0;
+}
+
+button {
+  background: #FCD116;
+  color: #0038A8;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Reveal animation styles */
+.reveal-effect {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.char {
+  display: inline-block;
+  opacity: 0;
+  transform-origin: center;
+}
+
+/* Sun animation */
+.sun {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  fill: #FCD116;
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+</head>
+<body>
+<svg class="sun" viewBox="0 0 100 100">
+  <path d="M50 0 L55 15 L45 15 Z M85 15 L75 25 L65 15 Z M100 50 L85 55 L85 45 Z M85 85 L75 75 L85 65 Z M50 100 L45 85 L55 85 Z M15 85 L25 75 L35 85 Z M0 50 L15 45 L15 55 Z M15 15 L25 25 L15 35 Z"/>
+  <circle cx="50" cy="50" r="20"/>
+</svg>
+
+<div class="container" data-aos="fade-up">
+  <h1 data-aos="fade-down">Filipino Name Generator</h1>
+  
+  <div class="gender-select" data-aos="fade-up">
+    <label>
+      <input type="radio" name="gender" value="female" checked>
+      Female
+    </label>
+    <label>
+      <input type="radio" name="gender" value="male">
+      Male
+    </label>
+  </div>
+
+  <div class="name-display">
+    <span class="name-part first-name"></span>
+    <span class="name-part last-name"></span>
+  </div>
+  <div class="meaning"></div>
+  
+  <button onclick="generateName()" data-aos="zoom-in">Generate Name</button>
+</div>
+
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+AOS.init({
+  duration: 1000,
+  once: true
+});
+
+const femaleFirstNames = [
+  {name: "Maria", meaning: "Star of the sea"},
+  {name: "Angela", meaning: "Messenger of God"},
+  {name: "Rosa", meaning: "Rose"},
+  {name: "Jasmine", meaning: "Jasmine flower"},
+  {name: "Luna", meaning: "Moon"},
+  {name: "Isabella", meaning: "Devoted to God"},
+  {name: "Carmen", meaning: "Garden"},
+  {name: "Sofia", meaning: "Wisdom"},
+  {name: "Luzviminda", meaning: "Light, Life, and Love"},
+  {name: "Mariposa", meaning: "Butterfly"}
+];
+
+const maleFirstNames = [
+  {name: "Juan", meaning: "God is gracious"},
+  {name: "Miguel", meaning: "Who is like God"},
+  {name: "Jose", meaning: "God will increase"},
+  {name: "Antonio", meaning: "Priceless one"},
+  {name: "Francisco", meaning: "Free man"},
+  {name: "Ramon", meaning: "Wise protector"},
+  {name: "Eduardo", meaning: "Wealthy guardian"},
+  {name: "Gabriel", meaning: "God is my strength"},
+  {name: "Lorenzo", meaning: "Crowned with laurel"},
+  {name: "Paulo", meaning: "Small, humble"}
+];
+
+const lastNames = [
+  {name: "Santos", meaning: "Saints"},
+  {name: "Reyes", meaning: "Kings"},
+  {name: "Cruz", meaning: "Cross"},
+  {name: "Garcia", meaning: "Bear"},
+  {name: "Gonzales", meaning: "Battle"},
+  {name: "Bautista", meaning: "Baptist"},
+  {name: "Mendoza", meaning: "Cold mountain"},
+  {name: "Torres", meaning: "Towers"},
+  {name: "Aquino", meaning: "Of the waters"},
+  {name: "dela Rosa", meaning: "Of the rose"}
+];
+
+function revealText(element, text) {
+  const chars = text.split('');
+  element.innerHTML = '';
+  
+  chars.forEach((char, index) => {
+    const span = document.createElement('span');
+    span.className = 'char';
+    span.textContent = char;
+    span.style.animationDelay = `${index * 50}ms`;
+    element.appendChild(span);
+  });
+
+  anime({
+    targets: element.querySelectorAll('.char'),
+    opacity: [0, 1],
+    translateY: [20, 0],
+    rotateX: [90, 0],
+    duration: 1000,
+    delay: anime.stagger(50),
+    easing: 'easeOutExpo'
+  });
+}
+
+function generateName() {
+  const gender = document.querySelector('input[name="gender"]:checked').value;
+  const firstNames = gender === 'female' ? femaleFirstNames : maleFirstNames;
+  
+  const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+
+  const firstNameElement = document.querySelector('.first-name');
+  const lastNameElement = document.querySelector('.last-name');
+  const meaningElement = document.querySelector('.meaning');
+
+  // Reset opacity and transform
+  firstNameElement.style.opacity = '0';
+  lastNameElement.style.opacity = '0';
+  meaningElement.style.opacity = '0';
+
+  // Reveal first name
+  setTimeout(() => {
+    firstNameElement.style.opacity = '1';
+    revealText(firstNameElement, firstName.name);
+  }, 100);
+
+  // Reveal last name
+  setTimeout(() => {
+    lastNameElement.style.opacity = '1';
+    revealText(lastNameElement, lastName.name);
+  }, 600);
+
+  // Reveal meaning
+  setTimeout(() => {
+    meaningElement.textContent = `First name means "${firstName.meaning}" • Last name means "${lastName.meaning}"`;
+    anime({
+      targets: meaningElement,
+      opacity: [0, 1],
+      translateY: [20, 0],
+      duration: 800,
+      easing: 'easeOutExpo'
+    });
+  }, 1200);
+
+  // Button animation
+  anime({
+    targets: 'button',
+    scale: [1, 1.1, 1],
+    duration: 300,
+    easing: 'easeInOutQuad'
+  });
+}
+
+// Initial name generation
+document.addEventListener('DOMContentLoaded', () => {
+  generateName();
+});
+
+// Button hover animations
+const button = document.querySelector('button');
+button.addEventListener('mouseover', (e) => {
+  anime({
+    targets: e.target,
+    scale: 1.05,
+    duration: 200,
+    easing: 'easeOutQuad'
+  });
+});
+
+button.addEventListener('mouseout', (e) => {
+  anime({
+    targets: e.target,
+    scale: 1,
+    duration: 200,
+    easing: 'easeOutQuad'
+  });
+});
+</script>
+</body></html>
